@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apostila Completa - Informática Aplicada | Técnico em Segurança do Trabalho</title>
+  <!-- Bootstrap 5 + Font Awesome + Google Fonts + Chart.js -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    body { background: #f0f4f8; scroll-behavior: smooth; }
+    .navbar-brand { font-weight: 700; }
+    .hero {
+      background: linear-gradient(135deg, #0a2f3f 0%, #1b6b7e 100%);
+      color: white;
+      padding: 3rem 0;
+      border-radius: 0 0 2rem 2rem;
+      margin-bottom: 2rem;
+    }
+    .capitulo {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    .capitulo h2 {
+      border-left: 8px solid #1b6b7e;
+      padding-left: 1rem;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      color: #0a2f3f;
+    }
+    .capitulo h3 {
+      font-size: 1.4rem;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+      color: #1b6b7e;
+      font-weight: 600;
+    }
+    .card-ferramenta {
+      background: #f8fafc;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      height: 100%;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .card-ferramenta:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); background: white; }
+    .tabela-especificacoes th { background: #1b6b7e; color: white; }
+    .risk-badge {
+      width: 45px; height: 45px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: bold; color: white; margin: 0.2rem;
+    }
+    pre {
+      background: #1e293b; color: #e2e8f0; padding: 1rem;
+      border-radius: 1rem; font-size: 0.85rem;
+    }
+    .dica {
+      background: #e6f7ff; border-left: 5px solid #1b6b7e;
+      padding: 1rem; border-radius: 0.8rem;
+    }
+    footer { background: #0a2f3f; color: #94a3b8; }
+    .btn-aplicacao { background: #1b6b7e; color: white; border-radius: 2rem; padding: 0.4rem 1.2rem; font-size: 0.8rem; }
+    .btn-aplicacao:hover { background: #0e4b5a; color: white; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#"><i class="fas fa-shield-alt me-2"></i>Informática Aplicada - TST</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarMain">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#hardware">Hardware</a></li>
+        <li class="nav-item"><a class="nav-link" href="#software">Software</a></li>
+        <li class="nav-item"><a class="nav-link" href="#sistemas">Sistemas Operacionais</a></li>
+        <li class="nav-item"><a class="nav-link" href="#word">Word</a></li>
+        <li class="nav-item"><a class="nav-link" href="#excel">Excel</a></li>
+        <li class="nav-item"><a class="nav-link" href="#mapas">Mapas de Risco</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="hero text-center">
+  <div class="container">
+    <i class="fas fa-laptop-code fa-4x mb-3"></i>
+    <h1 class="display-5 fw-bold">INFORMÁTICA APLICADA</h1>
+    <p class="lead">Curso Técnico em Segurança do Trabalho – Módulo I</p>
+    <p class="mb-0">Hardware | Software | Sistemas Operacionais | Word | Excel | Mapas de Risco | Gráficos</p>
+  </div>
+</div>
+
+<div class="container my-5">
+
+  <!-- ================= CAPÍTULO 1: HARDWARE ================= -->
+  <div id="hardware" class="capitulo">
+    <h2><i class="fas fa-microchip text-primary me-3"></i> Capítulo 1: Hardware – A Base da Informática para o TST</h2>
+    <p>O hardware é o conjunto de componentes físicos de um computador. Para o Técnico em Segurança do Trabalho, escolher o hardware correto impacta diretamente na produtividade para elaborar laudos, mapas de risco e análises estatísticas.</p>
+    
+    <h3>1.1 Componentes Internos Essenciais</h3>
+    <div class="table-responsive">
+      <table class="table table-bordered tabela-especificacoes">
+        <thead><tr><th>Componente</th><th>Função</th><th>Recomendação para TST</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>CPU (Processador)</strong></td><td>Executa cálculos e instruções</td><td>Intel Core i5 (12ª geração+) ou AMD Ryzen 5 – mínimo 4 núcleos</td></tr>
+          <tr><td><strong>Memória RAM</strong></td><td>Armazena dados temporários em uso</td><td>8 GB mínimo (16 GB recomendado para AutoCAD e planilhas complexas)</td></tr>
+          <tr><td><strong>Armazenamento (SSD/HD)</strong></td><td>Guarda arquivos permanentemente</td><td>SSD de 256 GB ou mais (para velocidade na abertura de documentos e softwares SST)</td></tr>
+          <tr><td><strong>Placa-mãe</strong></td><td>Conecta todos os componentes</td><td>Compatível com os demais componentes e com portas USB 3.0</td></tr>
+          <tr><td><strong>Fonte de alimentação</strong></td><td>Fornece energia estável</td><td>Mínimo 500W com certificação 80 Plus</td></tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <h3>1.2 Periféricos Indispensáveis</h3>
+    <div class="row g-3 mb-3">
+      <div class="col-md-4"><div class="card-ferramenta"><i class="fas fa-print fa-2x text-secondary"></i><h5 class="mt-2">Impressora Multifuncional</h5><p>Para imprimir laudos, CAT, mapas de risco e digitalizar documentos antigos.</p></div></div>
+      <div class="col-md-4"><div class="card-ferramenta"><i class="fas fa-mouse-pointer fa-2x text-info"></i><h5 class="mt-2">Mouse e Teclado Ergonômicos</h5><p>Previne LER/DORT – essencial para quem passa horas no computador.</p></div></div>
+      <div class="col-md-4"><div class="card-ferramenta"><i class="fas fa-desktop fa-2x text-primary"></i><h5 class="mt-2">Monitor 24" Full HD</h5><p>Visualização confortável de plantas, gráficos e planilhas extensas.</p></div></div>
+    </div>
+    <div class="dica">
+      <i class="fas fa-battery-full me-2"></i> <strong>Dica de ouro:</strong> Utilize um Nobreak para proteger seu equipamento contra quedas de energia e evitar perda de laudos não salvos.
+    </div>
+  </div>
+
+  <!-- ================= CAPÍTULO 2: SOFTWARE ================= -->
+  <div id="software" class="capitulo">
+    <h2><i class="fas fa-cube text-success me-3"></i> Capítulo 2: Software – O que é e como classificar</h2>
+    <p>Software é a parte lógica do computador – programas que realizam tarefas específicas. Divide-se em:</p>
+    <ul>
+      <li><strong>Software de Sistema:</strong> Sistemas Operacionais (Windows, Linux, macOS).</li>
+      <li><strong>Software Aplicativo:</strong> Programas como Word, Excel, navegadores, softwares de gestão de SST (GSST, QRisk).</li>
+      <li><strong>Software Utilitário:</strong> Antivírus, compactadores (WinRAR), backup.</li>
+    </ul>
+    <p>Para o TST, dominar os aplicativos é tão importante quanto conhecer as NRs.</p>
+  </div>
+
+  <!-- ================= CAPÍTULO 3: SISTEMAS OPERACIONAIS ================= -->
+  <div id="sistemas" class="capitulo">
+    <h2><i class="fab fa-windows text-info me-3"></i> Capítulo 3: Sistemas Operacionais – Gerenciando o Computador</h2>
+    <p>O Sistema Operacional (SO) é o software responsável por gerenciar o hardware e permitir a execução de outros programas.</p>
+    
+    <div class="row g-3 mb-4">
+      <div class="col-md-4"><div class="card-ferramenta"><i class="fab fa-windows fa-3x text-primary"></i><h4>Windows 10/11</h4><p>Mais utilizado em empresas. Compatível com todos os softwares de SST (GSST, eSocial, QRisk).</p></div></div>
+      <div class="col-md-4"><div class="card-ferramenta"><i class="fab fa-linux fa-3x text-success"></i><h4>Linux (Ubuntu)</h4><p>Gratuito, seguro e leve. Alternativa com LibreOffice e softwares livres.</p></div></div>
+      <div class="col-md-4"><div class="card-ferramenta"><i class="fab fa-apple fa-3x"></i><h4>macOS</h4><p>Utilizado em projetos de design de mapas e edição avançada.</p></div></div>
+    </div>
+    
+    <h3>3.1 Organização de Arquivos – Estrutura Recomendada</h3>
+    <p>Uma boa organização de pastas evita perda de documentos e agiliza auditorias fiscais.</p>
+    <pre>
+C:\SEGURANCA_TRABALHO\
+├── 01_PPRA\
+│   ├── PPRA_2025.docx
+│   └── ANEXOS_MEDICOES\
+├── 02_PCMSO\
+├── 03_MAPAS_RISCO\
+│   ├── MAPA_SETOR_PRODUTO.png
+│   └── MAPA_OFICINA_2025.dwg
+├── 04_ACIDENTES_CAT\
+│   ├── CAT_2024.xlsx
+│   └── RELATORIOS_ANALISE\
+├── 05_TREINAMENTOS_NR\
+└── 06_LAUDOS_EQUIPAMENTOS\
+    </pre>
+    
+    <h3>3.2 Atalhos de Teclado Essenciais no Windows</h3>
+    <ul>
+      <li><kbd>Ctrl + C</kbd> / <kbd>Ctrl + V</kbd> – Copiar / Colar</li>
+      <li><kbd>Ctrl + Z</kbd> – Desfazer ação</li>
+      <li><kbd>Ctrl + S</kbd> – Salvar documento (use SEMPRE!)</li>
+      <li><kbd>Windows + E</kbd> – Abrir Explorador de Arquivos</li>
+      <li><kbd>Alt + Tab</kbd> – Alternar entre janelas abertas</li>
+    </ul>
+  </div>
+
+  <!-- ================= CAPÍTULO 4: MICROSOFT WORD ================= -->
+  <div id="word" class="capitulo">
+    <h2><i class="fab fa-wordpress text-primary me-3"></i> Capítulo 4: Microsoft Word – Laudos, Ofícios e Documentos Técnicos</h2>
+    <p>O Word é a principal ferramenta para elaborar laudos técnicos, ordens de serviço, comunicados internos, atas da CIPA e programas de treinamento.</p>
+    
+    <h3>4.1 Recursos Essenciais para o TST</h3>
+    <div class="row g-3">
+      <div class="col-md-6"><div class="card-ferramenta"><i class="fas fa-heading"></i> <strong>Estilos e Formatação</strong><br>Utilize estilos para Título 1, Título 2, Normal. Isso gera sumário automático (referência → Sumário).</div></div>
+      <div class="col-md-6"><div class="card-ferramenta"><i class="fas fa-table"></i> <strong>Tabelas</strong><br>Inserir tabelas para cronogramas de treinamento, controle de EPIs, registro de acidentes.</div></div>
+      <div class="col-md-6"><div class="card-ferramenta"><i class="fas fa-image"></i> <strong>Inserir Imagens e Formas</strong><br>Adicione plantas baixas, logotipos, setas indicativas em mapas de risco simplificados.</div></div>
+      <div class="col-md-6"><div class="card-ferramenta"><i class="fas fa-file-pdf"></i> <strong>Salvar como PDF</strong><br>Arquivo → Salvar como → PDF. Ideal para enviar laudos sem risco de alteração.</div></div>
+    </div>
+    
+    <h3>4.2 Template para Laudo de Insalubridade</h3>
+    <pre>
+LAUDO TÉCNICO DE INSALUBRIDADE
+
+Empresa: [Nome]
+Setor: [Setor]
+Data: [Data]
+
+1. Objetivo: Avaliar a exposição a agentes nocivos.
+2. Metodologia: Medições realizadas conforme NR-15.
+3. Resultados: Ruído médio de 92 dB(A) – acima do limite.
+4. Conclusão: Atividade insalubre em grau médio.
+5. Responsável: [Nome do TST] – Registro profissional.
+    </pre>
+    <div class="dica">
+      <i class="fas fa-lightbulb"></i> <strong>Dica:</strong> Use o recurso “Controlar Alterações” ao revisar documentos com a equipe. Nunca esqueça de salvar versões com data (ex: PPRA_JAN_2025_v2.docx).
+    </div>
+  </div>
+
+  <!-- ================= CAPÍTULO 5: MICROSOFT EXCEL ================= -->
+  <div id="excel" class="capitulo">
+    <h2><i class="fas fa-file-excel text-success me-3"></i> Capítulo 5: Microsoft Excel – Estatísticas, Indicadores e Controle</h2>
+    <p>O Excel é a ferramenta mais poderosa para o TST calcular indicadores, controlar EPIs, gerenciar prazos de exames e gerar gráficos profissionais.</p>
+    
+    <h3>5.1 Fórmulas Essenciais</h3>
+    <ul>
+      <li><strong>SOMA</strong> – <code>=SOMA(A1:A10)</code> – Totaliza acidentes, horas trabalhadas.</li>
+      <li><strong>MÉDIA</strong> – <code>=MÉDIA(B1:B10)</code> – Média de dias perdidos.</li>
+      <li><strong>SE</strong> – <code>=SE(C2>5;"ALERTA";"NORMAL")</code> – Cria alertas automáticos.</li>
+      <li><strong>PROCV</strong> – Procura valores em tabelas (ex: buscar nome do funcionário pelo código).</li>
+    </ul>
+    
+    <h3>5.2 Cálculo da Taxa de Frequência (TF) – Exemplo Prático</h3>
+    <p>Fórmula: <strong>TF = (Nº acidentes × 1.000.000) ÷ Horas trabalhadas</strong></p>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead class="table-dark"><tr><th>Mês</th><th>Acidentes</th><th>Horas Trabalhadas</th><th>TF (calculada)</th></tr>
+        </thead>
+        <tbody id="tabelaTF"></tbody>
+      </table>
+    </div>
+    <button id="btnCalcularTF" class="btn btn-aplicacao mb-3"><i class="fas fa-calculator"></i> Simular novos dados</button>
+    
+    <h3>5.3 Gráficos no Excel</h3>
+    <p>Selecione os dados → Inserir → Gráfico de barras, pizza ou linhas. Use para mostrar evolução de acidentes, distribuição de riscos ou comparação entre setores.</p>
+    <canvas id="graficoAcidentesExcel" style="max-height: 250px; width: 100%; margin-top: 1rem;"></canvas>
+    
+    <h3>5.4 Tabela Dinâmica – Análise Rápida</h3>
+    <p>Selecione os dados → Inserir → Tabela Dinâmica. Permite agrupar acidentes por setor, mês ou tipo em segundos. Indispensável para relatórios da CIPA.</p>
+    <div class="dica">
+      <i class="fas fa-chart-line"></i> <strong>Dica:</strong> Use o recurso “Formatação Condicional” para destacar células com valores acima do limite (ex: TF > 50 em vermelho).
+    </div>
+  </div>
+
+  <!-- ================= CAPÍTULO 6: MAPAS DE RISCO COM FERRAMENTAS ================= -->
+  <div id="mapas" class="capitulo">
+    <h2><i class="fas fa-draw-polygon text-danger me-3"></i> Capítulo 6: Mapas de Risco – Ferramentas Digitais para Criação</h2>
+    <p>O Mapa de Riscos (NR-5) é obrigatório e pode ser feito com diversas ferramentas, desde softwares simples até CAD profissional.</p>
+    
+    <h3>6.1 Classificação dos Riscos – Cores e Tipos</h3>
+    <div class="row text-center mb-3">
+      <div class="col"><span class="risk-badge" style="background:#28a745;">Verde</span> Físico</div>
+      <div class="col"><span class="risk-badge" style="background:#dc3545;">Vermelho</span> Químico</div>
+      <div class="col"><span class="risk-badge" style="background:#8B4513;">Marrom</span> Biológico</div>
+      <div class="col"><span class="risk-badge" style="background:#ffc107; color:#000;">Amarelo</span> Ergonômico</div>
+      <div class="col"><span class="risk-badge" style="background:#0d6efd;">Azul</span> Acidente</div>
+    </div>
+    
+    <h3>6.2 Ferramentas para Criar Mapas de Risco</h3>
+    <div class="row g-3 mb-4">
+      <div class="col-md-6"><div class="card-ferramenta"><i class="fab fa-microsoft"></i> <strong>PowerPoint / Word</strong> – Inserir formas geométricas (círculos) sobre uma imagem da planta baixa.</div></div>
+      <div class="col-md-6"><div class="card-ferramenta"><i class="fas fa-chalkboard"></i> <strong>Canva (gratuito)</strong> – Modelos prontos, fácil para iniciantes.</div></div>
+      <div class="col-md-6"><div class="card-ferramenta"><i class="fas fa-drafting-compass"></i> <strong>LibreCAD / AutoCAD</strong> – Para projetos precisos e escalas técnicas.</div></div>
+      <div class="col-md-6"><div class="card-ferramenta"><i class="fas fa-chart-pie"></i> <strong>QRisk (software SST)</strong> – Gera mapas automaticamente a partir das medições.</div></div>
+    </div>
+    
+    <h3>6.3 Exemplo Interativo – Mapa de Risco Simulado</h3>
+    <div class="bg-light p-3 rounded-3">
+      <div id="mapaSimulado"></div>
+      <button id="btnAlterarIntensidade" class="btn btn-sm btn-aplicacao mt-2"><i class="fas fa-sync-alt"></i> Simular intensidade variável</button>
+      <p class="small text-muted mt-2">Círculos maiores = risco mais intenso. Cada cor representa um tipo de risco.</p>
+    </div>
+  </div>
+
+  <!-- ================= CAPÍTULO 7: OUTRAS FERRAMENTAS ÚTEIS ================= -->
+  <div class="capitulo">
+    <h2><i class="fas fa-tools text-warning me-3"></i> Capítulo 7: Ferramentas Complementares para o TST</h2>
+    <div class="row g-3">
+      <div class="col-md-4"><div class="card-ferramenta"><i class="fab fa-google"></i> <strong>Google Planilhas / Docs</strong><br>Gratuito, na nuvem, permite colaboração em tempo real. Ótimo para times remotos.</div></div>
+      <div class="col-md-4"><div class="card-ferramenta"><i class="fas fa-cloud-upload-alt"></i> <strong>OneDrive / Google Drive</strong><br>Backup automático de laudos, acesse de qualquer lugar.</div></div>
+      <div class="col-md-4"><div class="card-ferramenta"><i class="fas fa-file-pdf"></i> <strong>Adobe Acrobat / Foxit Reader</strong><br>Leitura e anotação de PDFs de NRs, manuais e instruções normativas.</div></div>
+    </div>
+  </div>
+
+  <!-- ================= EXERCÍCIOS PRÁTICOS ================= -->
+  <div class="capitulo" style="background: #eef2fa;">
+    <h2><i class="fas fa-tasks me-3"></i> Exercícios Práticos para Fixação</h2>
+    <ol>
+      <li><strong>Word:</strong> Crie um laudo de insalubridade simples com título, introdução, tabela de agentes e conclusão. Salve como PDF.</li>
+      <li><strong>Excel:</strong> Construa uma planilha com 5 meses de acidentes (dados fictícios) e calcule a Taxa de Frequência para cada mês. Insira um gráfico de barras.</li>
+      <li><strong>Mapa de Risco:</strong> No PowerPoint ou Canva, crie um mapa com 3 setores (Solda, Corte, Expedição) e insira círculos coloridos.</li>
+      <li><strong>Organização:</strong> Crie no seu computador a estrutura de pastas recomendada no Capítulo 3.</li>
+      <li><strong>Atalhos:</strong> Liste 5 atalhos de teclado que você mais usará no dia a dia.</li>
+    </ol>
+    <button id="exeResposta" class="btn btn-aplicacao mt-2">Ver exemplo de resposta do Excel</button>
+    <div id="respostaExe" style="display:none;" class="mt-3 alert alert-success">Exemplo: Janeiro: 2 acidentes / 20.000h → TF = 100; Fevereiro: 3 / 18.000h → TF = 166,7. Gráfico: inserir barras.</div>
+  </div>
+
+  <!-- REFERÊNCIAS -->
+  <div class="text-muted mt-4 p-3 border-top">
+    <strong>Referências Bibliográficas:</strong> CAPRON, H.L; JOHNSON, J.A. Introdução à informática. 8. ed. São Paulo: Pearson, 2004. / MANZANO, J.A.N.Z. BrOffice.org 2.0. / Normas Regulamentadoras NR-5, NR-9, NR-15. / ARAUJO, G. M. Normas regulamentadoras comentadas.
+  </div>
+</div>
+
+<footer class="text-center py-4">
+  <div class="container">
+    <p class="mb-0">Apostila 100% baseada em Informática Aplicada à Segurança do Trabalho</p>
+    <p class="small">Hardware | Software | Sistemas Operacionais | Word | Excel | Mapas de Risco</p>
+  </div>
+</footer>
+
+<script>
+  // Tabela TF dinâmica
+  let dadosTF = [
+    { mes: "Janeiro", acidentes: 2, horas: 20000 },
+    { mes: "Fevereiro", acidentes: 3, horas: 18000 },
+    { mes: "Março", acidentes: 1, horas: 22000 }
+  ];
+  function atualizarTabelaTF() {
+    const tbody = document.getElementById("tabelaTF");
+    if(tbody) {
+      tbody.innerHTML = "";
+      dadosTF.forEach(d => {
+        let tf = (d.acidentes * 1000000 / d.horas).toFixed(1);
+        tbody.innerHTML += `<tr><td>${d.mes}</td><td>${d.acidentes}</td><td>${d.horas}</td><td>${tf}</td></tr>`;
+      });
+    }
+  }
+  atualizarTabelaTF();
+  document.getElementById("btnCalcularTF")?.addEventListener("click", () => {
+    dadosTF = dadosTF.map(d => ({ ...d, acidentes: Math.floor(Math.random() * 5) + 1, horas: 18000 + Math.random() * 8000 }));
+    atualizarTabelaTF();
+    atualizarGrafico();
+  });
+  
+  // Gráfico simulado do Excel
+  const ctx = document.getElementById('graficoAcidentesExcel')?.getContext('2d');
+  let grafico;
+  function atualizarGrafico() {
+    if(grafico) grafico.destroy();
+    if(ctx) {
+      grafico = new Chart(ctx, {
+        type: 'bar',
+        data: { labels: dadosTF.map(d => d.mes), datasets: [{ label: 'Acidentes', data: dadosTF.map(d => d.acidentes), backgroundColor: '#1b6b7e' }] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { title: { display: true, text: 'Acidentes por Mês' } } }
+      });
+    }
+  }
+  atualizarGrafico();
+  
+  // Mapa de Risco interativo
+  const setores = [
+    { nome: "Solda", riscos: [{ cor: "#dc3545", tipo: "Químico", tamanho: 40 }, { cor: "#ffc107", tipo: "Ergonômico", tamanho: 25 }] },
+    { nome: "Corte", riscos: [{ cor: "#28a745", tipo: "Físico", tamanho: 48 }, { cor: "#0d6efd", tipo: "Acidente", tamanho: 30 }] },
+    { nome: "Expedição", riscos: [{ cor: "#0d6efd", tipo: "Acidente", tamanho: 35 }] }
+  ];
+  function renderMapa() {
+    const container = document.getElementById("mapaSimulado");
+    if(!container) return;
+    container.innerHTML = "";
+    setores.forEach(s => {
+      const div = document.createElement("div");
+      div.className = "d-flex justify-content-between align-items-center border-bottom py-2";
+      div.innerHTML = `<strong>${s.nome}</strong> <div>${s.riscos.map(r => `<span class="risk-badge" style="background:${r.cor}; width:${r.tamanho}px; height:${r.tamanho}px; font-size:10px;">${r.tipo.substring(0,2)}</span>`).join('')}</div>`;
+      container.appendChild(div);
+    });
+  }
+  renderMapa();
+  document.getElementById("btnAlterarIntensidade")?.addEventListener("click", () => {
+    setores[0].riscos[0].tamanho = setores[0].riscos[0].tamanho === 40 ? 60 : 40;
+    renderMapa();
+  });
+  
+  document.getElementById("exeResposta")?.addEventListener("click", () => {
+    document.getElementById("respostaExe").style.display = "block";
+  });
+  
+  // scroll suave
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      const hash = this.getAttribute('href');
+      if(hash && hash.startsWith('#')) {
+        e.preventDefault();
+        document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
