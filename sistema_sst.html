@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Integrado de Gestão de SST | Segurança do Trabalho</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f0f2f5; }
+    .sidebar {
+      background: linear-gradient(180deg, #0a2f3f 0%, #0a2f3f 100%);
+      min-height: 100vh;
+      color: white;
+    }
+    .sidebar .nav-link {
+      color: rgba(255,255,255,0.8);
+      padding: 0.8rem 1rem;
+      border-radius: 0.5rem;
+      margin: 0.2rem 0;
+      transition: all 0.2s;
+    }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active {
+      background: #1b6b7e;
+      color: white;
+    }
+    .sidebar .nav-link i { width: 28px; margin-right: 8px; }
+    .main-content { padding: 1.5rem; }
+    .card-dashboard {
+      border: none;
+      border-radius: 1rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+    }
+    .card-dashboard:hover { transform: translateY(-3px); }
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+    .risk-badge {
+      width: 45px; height: 45px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: bold; color: white; margin: 0.3rem;
+      font-size: 12px;
+    }
+    .btn-action { border-radius: 0.5rem; padding: 0.3rem 0.8rem; margin: 0 2px; }
+    .logo-area { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    @media (max-width: 768px) { .sidebar { min-height: auto; } }
+    footer { background: #fff; border-top: 1px solid #e0e0e0; margin-top: 2rem; padding: 1rem; text-align: center; }
+  </style>
+</head>
+<body>
+<div class="container-fluid p-0">
+  <div class="row g-0">
+    <!-- Sidebar -->
+    <div class="col-md-2 sidebar">
+      <div class="logo-area text-center">
+        <i class="fas fa-hard-hat fa-2x mb-2"></i>
+        <h5 class="mb-0">Sistema SST</h5>
+        <small>Gestão Integrada</small>
+      </div>
+      <nav class="nav flex-column px-3 mt-3">
+        <a class="nav-link active" href="#" data-page="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a class="nav-link" href="#" data-page="funcionarios"><i class="fas fa-users"></i> Funcionários</a>
+        <a class="nav-link" href="#" data-page="acidentes"><i class="fas fa-ambulance"></i> Acidentes (CAT)</a>
+        <a class="nav-link" href="#" data-page="epis"><i class="fas fa-helmet-safety"></i> Controle de EPIs</a>
+        <a class="nav-link" href="#" data-page="mapaRisco"><i class="fas fa-draw-polygon"></i> Mapa de Riscos</a>
+        <a class="nav-link" href="#" data-page="indicadores"><i class="fas fa-chart-simple"></i> Indicadores</a>
+        <a class="nav-link" href="#" data-page="backup"><i class="fas fa-database"></i> Backup / Restore</a>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-10 main-content">
+      <div id="pageContent">
+        <div class="text-center py-5"><i class="fas fa-spinner fa-spin fa-2x text-secondary"></i><br>Carregando sistema...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <small>Sistema Integrado de SST - Técnico em Segurança do Trabalho | IndexedDB Local</small>
+</footer>
+
+<script>
+  // ==================== INDEXEDDB SETUP CORRIGIDO ====================
+  let db;
+  const DB_NAME = "SistemaSSTDB";
+  const DB_VERSION = 3;
+  const STORES = { FUNCIONARIOS: "funcionarios", ACIDENTES: "acidentes", EPIS: "epis" };
+
+  function openDatabase() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      
+      request.onerror = (event) => {
+        console.error("Erro ao abrir banco:", event.target.error);
+        reject(event.target.error);
+      };
+      
+      request.onsuccess = (event) => {
+        db = event.target.result;
+        console.log("Banco de dados aberto com sucesso!");
+        resolve(db);
+      };
+      
+      request.onupgradeneeded = (event) => {
+        const dbUp = event.target.result;
+        console.log("Criando/atualizando estrutura do banco...");
+        
+        // Criar store de Funcionários
+        if (!dbUp.objectStoreNames.contains(STORES.FUNCIONARIOS)) {
+          const storeFunc = dbUp.createObjectStore(STORES.FUNCIONARIOS, { keyPath: "id", autoIncrement: true });
+          storeFunc.createIndex("cpf", "cpf", { unique: true });
+          storeFunc.createIndex("nome", "nome", { unique: false });
+        }
+        
+        // Criar store de Acidentes
+        if (!dbUp.objectStoreNames.contains(STORES.ACIDENTES)) {
+          const storeAcid = dbUp.createObjectStore(STORES.ACIDENTES, { keyPath: "id", autoIncrement: true });
+          storeAcid.createIndex("funcionarioId", "funcionarioId", { unique: false });
+          storeAcid.createIndex("data", "data", { unique: false });
+        }
+        
+        // Criar store de EPIs
+        if (!dbUp.objectStoreNames.contains(STORES.EPIS)) {
+          const storeEpi = dbUp.createObjectStore(STORES.EPIS, { keyPath: "id", autoIncrement: true });
+          storeEpi.createIndex("funcionarioId", "funcionarioId", { unique: false });
+          storeEpi.createIndex("validade", "validade", { unique: false });
+        }
+        
+        // Inserir dados iniciais apenas se não existirem
+        const tx = event.target.transaction;
+        
+        // Verificar se já existem funcionários
+        const funcStore = tx.objectStore(STORES.FUNCIONARIOS);
+        const countRequest = funcStore.count();
+        
+        countRequest.onsuccess = () => {
+          if (countRequest.result === 0) {
+            funcStore.add({ nome: "João Silva", cargo: "Operador de Máquinas", setor: "Produção", cpf: "12345678901", dataAdmissao: "2023-01-10" });
+            funcStore.add({ nome: "Maria Oliveira", cargo: "Soldadora", setor: "Solda", cpf: "10987654321", dataAdmissao: "2022-05-20" });
+            funcStore.add({ nome: "Carlos Santos", cargo: "Eletricista", setor: "Manutenção", cpf: "11122233344", dataAdmissao: "2024-02-15" });
+          }
+        };
+        
+        // Verificar se já existem acidentes
+        const acidStore = tx.objectStore(STORES.ACIDENTES);
+        const countAcid = acidStore.count();
+        countAcid.onsuccess = () => {
+          if (countAcid.result === 0) {
+            acidStore.add({ funcionarioId: 1, data: "2025-01-15", tipo: "Típico", descricao: "Corte no dedo durante operação", diasPerdidos: 3 });
+            acidStore.add({ funcionarioId: 2, data: "2025-02-10", tipo: "Trajeto", descricao: "Acidente de carro no trajeto", diasPerdidos: 5 });
+            acidStore.add({ funcionarioId: 3, data: "2025-03-05", tipo: "Típico", descricao: "Choque elétrico leve", diasPerdidos: 2 });
+          }
+        };
+        
+        // Verificar se já existem EPIs
+        const epiStore = tx.objectStore(STORES.EPIS);
+        const countEpi = epiStore.count();
+        countEpi.onsuccess = () => {
+          if (countEpi.result === 0) {
+            epiStore.add({ funcionarioId: 1, equipamento: "Capacete", dataEntrega: "2025-01-01", validade: "2025-12-31" });
+            epiStore.add({ funcionarioId: 2, equipamento: "Luva de Solda", dataEntrega: "2025-01-10", validade: "2025-06-30" });
+            epiStore.add({ funcionarioId: 3, equipamento: "Óculos de Proteção", dataEntrega: "2025-02-01", validade: "2025-08-01" });
+          }
+        };
+      };
+    });
+  }
+
+  // ==================== CRUD HELPERS ====================
+  async function getAll(storeName) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(storeName, "readonly");
+      const store = tx.objectStore(storeName);
+      const request = store.getAll();
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async function addItem(storeName, item) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(storeName, "readwrite");
+      const store = tx.objectStore(storeName);
+      const request = store.add(item);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async function updateItem(storeName, item) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(storeName, "readwrite");
+      const store = tx.objectStore(storeName);
+      const request = store.put(item);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async function deleteItem(storeName, id) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(storeName, "readwrite");
+      const store = tx.objectStore(storeName);
+      const request = store.delete(id);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  // ==================== RENDERIZAÇÃO DAS PÁGINAS ====================
+  async function loadPage(pageId) {
+    const container = $("#pageContent");
+    const funcionarios = await getAll(STORES.FUNCIONARIOS);
+    const acidentes = await getAll(STORES.ACIDENTES);
+    const epis = await getAll(STORES.EPIS);
+    
+    if (pageId === "dashboard") {
+      let totalAcidentes = acidentes.length;
+      let totalFunc = funcionarios.length;
+      let diasPerdidos = acidentes.reduce((acc, a) => acc + (a.diasPerdidos || 0), 0);
+      let horasTrabalhadas = totalFunc * 160 * 6;
+      let tf = (totalAcidentes * 1000000 / (horasTrabalhadas || 1)).toFixed(1);
+      
+      container.html(`
+        <div class="row g-4 mb-4">
+          <div class="col-md-3"><div class="card-dashboard card p-3"><div class="d-flex justify-content-between"><div><h6 class="text-muted">Funcionários</h6><h2>${totalFunc}</h2></div><div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="fas fa-users"></i></div></div></div></div>
+          <div class="col-md-3"><div class="card-dashboard card p-3"><div class="d-flex justify-content-between"><div><h6 class="text-muted">Acidentes (ano)</h6><h2>${totalAcidentes}</h2></div><div class="stat-icon bg-danger bg-opacity-10 text-danger"><i class="fas fa-ambulance"></i></div></div></div></div>
+          <div class="col-md-3"><div class="card-dashboard card p-3"><div class="d-flex justify-content-between"><div><h6 class="text-muted">Dias Perdidos</h6><h2>${diasPerdidos}</h2></div><div class="stat-icon bg-warning bg-opacity-10 text-warning"><i class="fas fa-calendar-times"></i></div></div></div></div>
+          <div class="col-md-3"><div class="card-dashboard card p-3"><div class="d-flex justify-content-between"><div><h6 class="text-muted">Taxa Frequência (TF)</h6><h2>${tf}</h2></div><div class="stat-icon bg-success bg-opacity-10 text-success"><i class="fas fa-chart-line"></i></div></div></div></div>
+        </div>
+        <div class="row">
+          <div class="col-md-6"><div class="card p-3"><canvas id="graficoAcidentes"></canvas></div></div>
+          <div class="col-md-6"><div class="card p-3"><canvas id="graficoSetores"></canvas></div></div>
+        </div>
+      `);
+      
+      setTimeout(() => {
+        const ctxBar = document.getElementById('graficoAcidentes')?.getContext('2d');
+        if (ctxBar) new Chart(ctxBar, { type: 'bar', data: { labels: ['Jan', 'Fev', 'Mar', 'Abr'], datasets: [{ label: 'Acidentes', data: [2, 3, 1, 4], backgroundColor: '#1b6b7e' }] } });
+        const ctxPie = document.getElementById('graficoSetores')?.getContext('2d');
+        if (ctxPie) new Chart(ctxPie, { type: 'pie', data: { labels: ['Produção', 'Solda', 'Manutenção'], datasets: [{ data: [5, 3, 2], backgroundColor: ['#28a745', '#dc3545', '#ffc107'] }] } });
+      }, 100);
+    }
+    else if (pageId === "funcionarios") {
+      container.html(`
+        <div class="d-flex justify-content-between align-items-center mb-3"><h4><i class="fas fa-users"></i> Cadastro de Funcionários</h4><button class="btn btn-primary" id="btnNovoFunc"><i class="fas fa-plus"></i> Novo Funcionário</button></div>
+        <div class="table-responsive"><table class="table table-hover bg-white rounded"><thead class="table-dark"><tr><th>ID</th><th>Nome</th><th>Cargo</th><th>Setor</th><th>CPF</th><th>Admissão</th><th>Ações</th></tr></thead><tbody id="tabelaFunc"></tbody></table></div>
+      `);
+      const tbody = $("#tabelaFunc");
+      funcionarios.forEach(f => {
+        tbody.append(`<tr><td>${f.id}</td><td>${f.nome}</td><td>${f.cargo || '-'}</td><td>${f.setor || '-'}</td><td>${f.cpf}</td><td>${f.dataAdmissao || '-'}</td><td><button class="btn btn-sm btn-outline-warning editFunc" data-id="${f.id}"><i class="fas fa-edit"></i></button> <button class="btn btn-sm btn-outline-danger delFunc" data-id="${f.id}"><i class="fas fa-trash"></i></button></td></tr>`);
+      });
+      bindFuncEvents();
+    }
+    else if (pageId === "acidentes") {
+      let comboFunc = funcionarios.map(f => `<option value="${f.id}">${f.nome}</option>`).join('');
+      container.html(`
+        <div class="d-flex justify-content-between align-items-center mb-3"><h4><i class="fas fa-ambulance"></i> Registro de Acidentes (CAT)</h4><button class="btn btn-danger" id="btnNovoAcidente"><i class="fas fa-plus"></i> Registrar Acidente</button></div>
+        <div class="table-responsive"><table class="table table-bordered bg-white"><thead class="table-dark"><tr><th>ID</th><th>Funcionário</th><th>Data</th><th>Tipo</th><th>Descrição</th><th>Dias Perdidos</th><th>Ações</th></tr></thead><tbody id="tabelaAcidentes"></tbody></table></div>
+        <div class="modal fade" id="modalAcidente" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header bg-danger text-white"><h5 class="modal-title">Registrar Acidente</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="formAcidente"><input type="hidden" id="acidId"><div class="mb-2"><label>Funcionário</label><select id="acidFuncId" class="form-control" required>${comboFunc}</select></div><div class="mb-2"><label>Data</label><input type="date" id="acidData" class="form-control" required></div><div class="mb-2"><label>Tipo</label><select id="acidTipo" class="form-control"><option>Típico</option><option>Trajeto</option></select></div><div class="mb-2"><label>Descrição</label><textarea id="acidDesc" class="form-control"></textarea></div><div class="mb-2"><label>Dias Perdidos</label><input type="number" id="acidDias" class="form-control" value="0"></div></form></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-danger" id="saveAcidenteBtn">Salvar</button></div></div></div></div>
+      `);
+      const tbodyAc = $("#tabelaAcidentes");
+      for (let a of acidentes) {
+        let funcNome = funcionarios.find(f => f.id === a.funcionarioId)?.nome || "Desconhecido";
+        tbodyAc.append(`<tr><td>${a.id}</td><td>${funcNome}</td><td>${a.data}</td><td>${a.tipo}</td><td>${a.descricao}</td><td>${a.diasPerdidos}</td><td><button class="btn btn-sm btn-outline-warning editAcid" data-id="${a.id}"><i class="fas fa-edit"></i></button> <button class="btn btn-sm btn-outline-danger delAcid" data-id="${a.id}"><i class="fas fa-trash"></i></button></td></tr>`);
+      }
+      bindAcidentesEvents();
+    }
+    else if (pageId === "epis") {
+      container.html(`
+        <div class="d-flex justify-content-between align-items-center mb-3"><h4><i class="fas fa-helmet-safety"></i> Controle de EPIs</h4><button class="btn btn-success" id="btnNovoEpi"><i class="fas fa-plus"></i> Nova Entrega de EPI</button></div>
+        <div class="table-responsive"><table class="table bg-white"><thead class="table-dark"><tr><th>ID</th><th>Funcionário</th><th>Equipamento</th><th>Data Entrega</th><th>Validade</th><th>Status</th><th>Ações</th></tr></thead><tbody id="tabelaEpis"></tbody></table></div>
+        <div class="modal fade" id="modalEpi" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header bg-success text-white"><h5 class="modal-title">Registrar EPI</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="formEpi"><input type="hidden" id="epiId"><div class="mb-2"><label>Funcionário</label><select id="epiFuncId" class="form-control">${funcionarios.map(f => `<option value="${f.id}">${f.nome}</option>`)}</select></div><div class="mb-2"><label>Equipamento</label><input id="epiEquip" class="form-control" required></div><div class="mb-2"><label>Data Entrega</label><input type="date" id="epiDataEntrega" class="form-control" required></div><div class="mb-2"><label>Validade</label><input type="date" id="epiValidade" class="form-control" required></div></form></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-success" id="saveEpiBtn">Salvar</button></div></div></div></div>
+      `);
+      const tbodyEpi = $("#tabelaEpis");
+      const hoje = new Date().toISOString().slice(0, 10);
+      for (let e of epis) {
+        let fnome = funcionarios.find(f => f.id === e.funcionarioId)?.nome || "";
+        let status = e.validade >= hoje ? "Válido" : "Vencido";
+        let statusClass = e.validade >= hoje ? "bg-success" : "bg-danger";
+        tbodyEpi.append(`<tr><td>${e.id}</td><td>${fnome}</td><td>${e.equipamento}</td><td>${e.dataEntrega}</td><td>${e.validade}</td><td><span class="badge ${statusClass}">${status}</span></td><td><button class="btn btn-sm btn-outline-danger delEpi" data-id="${e.id}"><i class="fas fa-trash"></i></button></td></tr>`);
+      }
+      bindEpisEvents();
+    }
+    else if (pageId === "mapaRisco") {
+      container.html(`
+        <h4><i class="fas fa-draw-polygon"></i> Mapa de Riscos Interativo</h4>
+        <div class="row">
+          <div class="col-md-6"><div class="card p-3"><h5>Legenda</h5><div><span class="risk-badge" style="background:#28a745;">F</span> Físico (Ruído, Calor) <span class="risk-badge" style="background:#dc3545;">Q</span> Químico (Poeiras, Fumos) <span class="risk-badge" style="background:#ffc107; color:#000;">E</span> Ergonômico <span class="risk-badge" style="background:#0d6efd;">A</span> Acidente</div><hr><div id="areaMapa" class="bg-light p-3 rounded" style="min-height:250px;"></div></div></div>
+          <div class="col-md-6"><div class="card p-3"><h5>Setores da Empresa</h5><div id="setoresLista"></div><button class="btn btn-primary mt-3" id="atualizarIntensidade"><i class="fas fa-chart-line"></i> Simular Risco Alto</button></div></div>
+        </div>
+      `);
+      
+      const setoresMapa = [
+        { nome: "Solda", riscos: [{ cor: "#dc3545", rot: "Q" }, { cor: "#ffc107", rot: "E" }] },
+        { nome: "Corte", riscos: [{ cor: "#28a745", rot: "F" }, { cor: "#0d6efd", rot: "A" }] },
+        { nome: "Expedição", riscos: [{ cor: "#0d6efd", rot: "A" }] },
+        { nome: "Pintura", riscos: [{ cor: "#dc3545", rot: "Q" }] }
+      ];
+      
+      function renderMapaRisco() {
+        let html = `<div class="d-flex flex-wrap">`;
+        setoresMapa.forEach(s => {
+          html += `<div class="border p-3 m-2 rounded" style="min-width:150px; background:white;"><strong>${s.nome}</strong><div class="mt-2">${s.riscos.map(r => `<span class="risk-badge" style="background:${r.cor}; width:40px; height:40px;">${r.rot}</span>`).join('')}</div></div>`;
+        });
+        html += `</div>`;
+        $("#areaMapa").html(html);
+        $("#setoresLista").html(`<ul class="list-group">${setoresMapa.map(s => `<li class="list-group-item">${s.nome} - Riscos: ${s.riscos.map(r => r.rot).join(', ')}</li>`).join('')}</ul>`);
+      }
+      renderMapaRisco();
+      $("#atualizarIntensidade").off().on("click", () => {
+        setoresMapa[0].riscos.push({ cor: "#0d6efd", rot: "A" });
+        renderMapaRisco();
+        alert("Intensidade de risco aumentada no setor de Solda!");
+      });
+    }
+    else if (pageId === "indicadores") {
+      let totalAcid = acidentes.length;
+      let diasPerd = acidentes.reduce((a, c) => a + (c.diasPerdidos || 0), 0);
+      let horasTrab = funcionarios.length * 160 * 6;
+      let tfCalc = (totalAcid * 1000000 / (horasTrab || 1)).toFixed(1);
+      let tgCalc = (diasPerd * 1000000 / (horasTrab || 1)).toFixed(1);
+      let fapSimulado = Math.min(2.0, (tfCalc / 100) + 0.5).toFixed(2);
+      
+      container.html(`
+        <h4><i class="fas fa-chart-simple"></i> Indicadores de SST</h4>
+        <div class="row g-4">
+          <div class="col-md-4"><div class="card p-3 text-center"><h5>Taxa de Frequência (TF)</h5><h2 class="text-primary">${tfCalc}</h2><small>Acidentes × 1.000.000 / HHT</small></div></div>
+          <div class="col-md-4"><div class="card p-3 text-center"><h5>Taxa de Gravidade (TG)</h5><h2 class="text-warning">${tgCalc}</h2><small>Dias perdidos × 1.000.000 / HHT</small></div></div>
+          <div class="col-md-4"><div class="card p-3 text-center"><h5>FAP Simulado</h5><h2 class="text-success">${fapSimulado}</h2><small>Fator Acidentário de Prevenção</small></div></div>
+        </div>
+        <div class="mt-4"><div class="card p-3"><canvas id="graficoEvolucao" height="150"></canvas></div></div>
+        <div class="alert alert-info mt-3"><i class="fas fa-info-circle"></i> Fórmulas: TF = (Nº acidentes × 1.000.000) ÷ Horas Homem Trabalhadas. TG = (Dias perdidos × 1.000.000) ÷ HHT.</div>
+      `);
+      setTimeout(() => {
+        const ctx = document.getElementById('graficoEvolucao')?.getContext('2d');
+        if (ctx) new Chart(ctx, { type: 'line', data: { labels: ['Jan', 'Fev', 'Mar', 'Abr'], datasets: [{ label: 'Acidentes', data: [2, 3, 1, 4], borderColor: '#1b6b7e', tension: 0.3, fill: false }] } });
+      }, 100);
+    }
+    else if (pageId === "backup") {
+      container.html(`
+        <div class="card p-4"><h4><i class="fas fa-database"></i> Backup e Restauração</h4>
+        <p>Exportar todos os dados (funcionários, acidentes, EPIs) para arquivo JSON.</p>
+        <button id="btnExportar" class="btn btn-success me-2"><i class="fas fa-download"></i> Backup Completo</button>
+        <input type="file" id="fileRestore" accept=".json" style="display:none;">
+        <button id="btnRestaurar" class="btn btn-warning"><i class="fas fa-upload"></i> Restaurar Backup</button>
+        <div id="msgBackup" class="mt-3"></div></div>
+      `);
+      
+      $("#btnExportar").off().on("click", async () => {
+        const funcs = await getAll(STORES.FUNCIONARIOS);
+        const acids = await getAll(STORES.ACIDENTES);
+        const episData = await getAll(STORES.EPIS);
+        const dataStr = JSON.stringify({ funcionarios: funcs, acidentes: acids, epis: episData }, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `backup_sst_${new Date().toISOString().slice(0, 19)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        $("#msgBackup").html('<div class="alert alert-success">Backup gerado com sucesso!</div>');
+        setTimeout(() => $("#msgBackup").html(''), 3000);
+      });
+      
+      $("#btnRestaurar").off().on("click", () => $("#fileRestore").click());
+      
+      $("#fileRestore").off().on("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        try {
+          const text = await file.text();
+          const data = JSON.parse(text);
+          
+          const tx = db.transaction([STORES.FUNCIONARIOS, STORES.ACIDENTES, STORES.EPIS], "readwrite");
+          tx.objectStore(STORES.FUNCIONARIOS).clear();
+          tx.objectStore(STORES.ACIDENTES).clear();
+          tx.objectStore(STORES.EPIS).clear();
+          
+          if (data.funcionarios) data.funcionarios.forEach(f => tx.objectStore(STORES.FUNCIONARIOS).add(f));
+          if (data.acidentes) data.acidentes.forEach(a => tx.objectStore(STORES.ACIDENTES).add(a));
+          if (data.epis) data.epis.forEach(e => tx.objectStore(STORES.EPIS).add(e));
+          
+          await new Promise((resolve) => { tx.oncomplete = resolve; });
+          $("#msgBackup").html('<div class="alert alert-success">Restauração concluída! Recarregando...</div>');
+          setTimeout(() => location.reload(), 1500);
+        } catch (err) {
+          $("#msgBackup").html('<div class="alert alert-danger">Erro no arquivo de backup!</div>');
+        }
+        $("#fileRestore").val('');
+      });
+    }
+    
+    $(".sidebar .nav-link").removeClass("active");
+    $(`.sidebar .nav-link[data-page="${pageId}"]`).addClass("active");
+  }
+
+  // ==================== EVENT BINDINGS ====================
+  function bindFuncEvents() {
+    $(".editFunc").off().on("click", async function() {
+      let id = $(this).data("id");
+      let funcs = await getAll(STORES.FUNCIONARIOS);
+      let f = funcs.find(f => f.id == id);
+      if (f) {
+        let novoNome = prompt("Editar nome", f.nome);
+        if (novoNome) { f.nome = novoNome; await updateItem(STORES.FUNCIONARIOS, f); loadPage("funcionarios"); }
+      }
+    });
+    $(".delFunc").off().on("click", async function() {
+      if (confirm("Excluir funcionário?")) { await deleteItem(STORES.FUNCIONARIOS, $(this).data("id")); loadPage("funcionarios"); }
+    });
+    $("#btnNovoFunc").off().on("click", function() {
+      let nome = prompt("Nome completo");
+      let cpf = prompt("CPF");
+      let cargo = prompt("Cargo");
+      let setor = prompt("Setor");
+      let admissao = prompt("Data Admissão (AAAA-MM-DD)");
+      if (nome && cpf) addItem(STORES.FUNCIONARIOS, { nome, cpf, cargo, setor, dataAdmissao: admissao }).then(() => loadPage("funcionarios"));
+    });
+  }
+
+  function bindAcidentesEvents() {
+    let modal = new bootstrap.Modal(document.getElementById("modalAcidente"));
+    $("#btnNovoAcidente").off().on("click", () => { $("#formAcidente")[0].reset(); $("#acidId").val(""); $("#acidData").val(new Date().toISOString().slice(0,10)); modal.show(); });
+    $(".editAcid").off().on("click", async function() {
+      let id = $(this).data("id");
+      let lista = await getAll(STORES.ACIDENTES);
+      let acid = lista.find(a => a.id == id);
+      if (acid) { $("#acidId").val(acid.id); $("#acidFuncId").val(acid.funcionarioId); $("#acidData").val(acid.data); $("#acidTipo").val(acid.tipo); $("#acidDesc").val(acid.descricao); $("#acidDias").val(acid.diasPerdidos); modal.show(); }
+    });
+    $(".delAcid").off().on("click", async function() {
+      if (confirm("Excluir acidente?")) { await deleteItem(STORES.ACIDENTES, $(this).data("id")); loadPage("acidentes"); }
+    });
+    $("#saveAcidenteBtn").off().on("click", async function() {
+      let id = $("#acidId").val();
+      let obj = { funcionarioId: parseInt($("#acidFuncId").val()), data: $("#acidData").val(), tipo: $("#acidTipo").val(), descricao: $("#acidDesc").val(), diasPerdidos: parseInt($("#acidDias").val()) || 0 };
+      if (id) { obj.id = parseInt(id); await updateItem(STORES.ACIDENTES, obj); }
+      else { await addItem(STORES.ACIDENTES, obj); }
+      modal.hide();
+      loadPage("acidentes");
+    });
+  }
+
+  function bindEpisEvents() {
+    let modal = new bootstrap.Modal(document.getElementById("modalEpi"));
+    $("#btnNovoEpi").off().on("click", () => { $("#formEpi")[0].reset(); $("#epiId").val(""); $("#epiDataEntrega").val(new Date().toISOString().slice(0,10)); modal.show(); });
+    $(".delEpi").off().on("click", async function() {
+      if (confirm("Excluir EPI?")) { await deleteItem(STORES.EPIS, $(this).data("id")); loadPage("epis"); }
+    });
+    $("#saveEpiBtn").off().on("click", async function() {
+      let obj = { funcionarioId: parseInt($("#epiFuncId").val()), equipamento: $("#epiEquip").val(), dataEntrega: $("#epiDataEntrega").val(), validade: $("#epiValidade").val() };
+      await addItem(STORES.EPIS, obj);
+      modal.hide();
+      loadPage("epis");
+    });
+  }
+
+  // ==================== INICIALIZAÇÃO ====================
+  $(async function() {
+    try {
+      await openDatabase();
+      loadPage("dashboard");
+      
+      $(".sidebar .nav-link").on("click", function(e) {
+        e.preventDefault();
+        let page = $(this).data("page");
+        if (page) loadPage(page);
+      });
+    } catch (error) {
+      console.error("Erro ao inicializar:", error);
+      $("#pageContent").html(`<div class="alert alert-danger">Erro ao carregar o banco de dados. Recarregue a página.</div>`);
+    }
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
